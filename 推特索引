@@ -1,0 +1,30 @@
+import tweepy
+
+# 认证信息：替换成你的 API 密钥和访问令牌
+consumer_key = 'YOUR_CONSUMER_KEY'
+consumer_secret = 'YOUR_CONSUMER_SECRET'
+access_token = 'YOUR_ACCESS_TOKEN'
+access_token_secret = 'YOUR_ACCESS_TOKEN_SECRET'
+
+# 设置 Tweepy 客户端
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth)
+
+# 获取特定推文的信息
+tweet_id = 'TWEET_ID'  # 替换为你要查询的推文的 ID
+tweet = api.get_status(tweet_id)
+
+# 打印点赞数和转推数
+print(f"Likes: {tweet.favorite_count}")
+print(f"Retweets: {tweet.retweet_count}")
+
+# 获取并打印回复数
+# 注意：这里我们假设推文是对另一个推文的回复
+replies_count = 0
+for tweet in tweepy.Cursor(api.search, q=f'to:{tweet.user.screen_name}', since_id=tweet_id).items():
+    if hasattr(tweet, 'in_reply_to_status_id_str'):
+        if tweet.in_reply_to_status_id_str == tweet_id:
+            replies_count += 1
+
+print(f"Replies: {replies_count}")
